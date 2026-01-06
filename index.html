@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Besyachka</title>
+    <title>BESYACHKA | Minimalist Archive</title>
+    
+    <!-- ПОДКЛЮЧЕНИЕ ЛОГОТИПА -->
+    <link rel="icon" type="image/png" href="logo.png">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400&family=Manrope:wght@200;400;600&display=swap');
 
         :root {
             --bg-color: #050505;
-            --accent-color: #d1c4a5; /* Шампань */
+            --accent-color: #d1c4a5;
             --text-color: #f0f0f0;
             --text-dim: #666;
             
@@ -33,9 +37,49 @@
             justify-content: center;
             perspective: 1200px;
             position: relative;
-            /* Стандартный курсор */
-            cursor: default;
         }
+
+        /* --- РАЗРЕШАЕМ ВЫДЕЛЕНИЕ ТЕКСТА --- */
+        h1, h2, h3, span, p, .subtitle, .info-overlay {
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            cursor: text;
+            pointer-events: auto; 
+        }
+
+        /* --- LIGHTBOX --- */
+        .lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox.active { opacity: 1; pointer-events: all; }
+
+        .lightbox img {
+            max-width: 90%; max-height: 85%;
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 0 50px rgba(209, 196, 165, 0.1);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            cursor: default; 
+        }
+
+        .lightbox.active img { transform: scale(1); }
+
+        .lightbox-close {
+            position: absolute; top: 30px; right: 40px;
+            font-size: 40px; color: var(--accent-color);
+            cursor: pointer; font-family: 'Manrope', sans-serif;
+            transition: transform 0.3s; user-select: none;
+        }
+
+        .lightbox-close:hover { transform: rotate(90deg); color: #fff; }
 
         /* --- ATMOSPHERE --- */
         .noise {
@@ -79,11 +123,13 @@
             font-size: 2.5rem; font-weight: 400; letter-spacing: 1.2rem;
             color: var(--accent-color); margin-bottom: 1rem; opacity: 0.9;
             text-shadow: 0 0 20px rgba(209, 196, 165, 0.2);
+            pointer-events: auto;
         }
 
         .subtitle {
             font-size: 0.7rem; letter-spacing: 0.4rem;
             text-transform: uppercase; color: var(--text-dim);
+            pointer-events: auto;
         }
 
         /* --- CAROUSEL --- */
@@ -110,7 +156,10 @@
             backface-visibility: hidden;
             -webkit-box-reflect: below 2px linear-gradient(transparent 85%, rgba(0,0,0,0.4));
             transition: all 0.6s ease;
-            cursor: pointer; /* Стандартный курсор-рука при наведении */
+            
+            /* ХИТБОКСЫ: Клики отключены, если не активен */
+            pointer-events: none; 
+            z-index: 10;
         }
 
         .art-piece:nth-child(1) { transform: rotateY(0deg) translateZ(var(--radius)); }
@@ -129,14 +178,24 @@
             transition: all 1s ease; transform: scale(1);
         }
 
-        /* Активный элемент */
+        /* --- АКТИВНЫЙ ЭЛЕМЕНТ --- */
         .art-piece.active {
             border-color: var(--accent-color);
             box-shadow: 0 0 40px rgba(209, 196, 165, 0.2);
+            
+            /* ВКЛЮЧАЕМ КЛИКИ ТОЛЬКО ДЛЯ АКТИВНОГО */
+            pointer-events: auto; 
+            z-index: 100;
+            cursor: pointer;
         }
+
         .art-piece.active img {
             filter: grayscale(0%) contrast(1) brightness(1);
             transform: scale(1.05);
+        }
+        
+        .art-piece.active:hover img {
+            transform: scale(1.08);
         }
 
         .info-overlay {
@@ -144,7 +203,13 @@
             background: linear-gradient(to top, #000000 0%, transparent 100%);
             display: flex; flex-direction: column; align-items: center;
             opacity: 0; transition: opacity 0.6s ease;
+            pointer-events: none; 
         }
+        
+        .info-overlay h3, .info-overlay span {
+            pointer-events: auto;
+        }
+        
         .art-piece.active .info-overlay { opacity: 1; }
 
         .info-overlay h3 {
@@ -165,13 +230,13 @@
             background: transparent; border: none;
             color: rgba(255, 255, 255, 0.2);
             font-family: 'Manrope', sans-serif; font-weight: 200; font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            cursor: pointer; transition: all 0.3s ease;
             text-transform: uppercase; letter-spacing: 0.3rem; padding: 20px;
+            user-select: none;
         }
         .nav-btn:hover { color: var(--accent-color); text-shadow: 0 0 10px rgba(209, 196, 165, 0.5); transform: scale(1.1); }
 
-        /* --- MOBILE ADAPTATION --- */
+        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
         @media (max-width: 768px) {
             :root {
                 --card-width: 260px;
@@ -194,6 +259,12 @@
     <div class="vignette"></div>
     <div class="spotlight"></div>
     <div id="particles-container"></div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-close">&times;</div>
+        <img id="lightbox-img" src="" alt="Full view">
+    </div>
 
     <header>
         <h1>BESYACHKA</h1>
@@ -293,19 +364,37 @@
             if (e.key === 'ArrowRight') rotateCarousel(1);
         });
 
+        // --- LIGHTBOX LOGIC ---
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const closeBtn = document.querySelector('.lightbox-close');
+
+        items.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const imgSource = item.querySelector('img').src;
+                lightboxImg.src = imgSource;
+                lightbox.classList.add('active');
+            });
+        });
+
+        function closeLightbox() { lightbox.classList.remove('active'); }
+        closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target === lightboxImg) closeLightbox();
+        });
+
         // --- SWIPE LOGIC ---
         const touchArea = document.getElementById('touch-area');
         let touchStartX = 0;
         let touchEndX = 0;
 
-        touchArea.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
+        touchArea.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
         touchArea.addEventListener('touchend', e => {
             touchEndX = e.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50) rotateCarousel(1); 
-            if (touchEndX > touchStartX + 50) rotateCarousel(-1);
+            if (!lightbox.classList.contains('active')) {
+                if (touchEndX < touchStartX - 50) rotateCarousel(1); 
+                if (touchEndX > touchStartX + 50) rotateCarousel(-1);
+            }
         });
 
         // --- PARTICLES ---
@@ -338,5 +427,4 @@
         }
     </script>
 </body>
-
 </html>
