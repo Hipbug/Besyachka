@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BESYACHKA | Platinum Edition</title>
+    <title>Besyachka</title>
+    
+    <!-- ИКОНКА -->
+    <link rel="icon" type="image/png" href="logo.png">
+
     <style>
         /* --- FONTS --- */
         @import url('https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@300;500&display=swap');
@@ -40,92 +44,86 @@
             align-items: center;
         }
 
-        /* --- CINEMATIC PRELOADER --- */
+        /* --- PRELOADER (ИСПРАВЛЕНО) --- */
         .preloader {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: #000;
+            background-color: #050505;
             z-index: 99999;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* Эффект шторки при закрытии */
-            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+            transition: opacity 1s ease-in-out, transform 1s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
+        /* Класс для скрытия */
         .preloader.hidden {
-            transform: translateY(-100%); /* Уезжает вверх */
+            opacity: 0;
+            transform: translateY(-50px);
+            pointer-events: none;
         }
 
         .loader-content {
-            position: relative;
             text-align: center;
-            z-index: 2;
         }
 
-        /* Логотип с эффектом хрома и разъезжающимися буквами */
         .loader-logo {
             font-family: 'Italiana', serif;
             font-size: 4rem;
-            letter-spacing: 10px;
+            letter-spacing: 5px;
             color: transparent;
-            background: linear-gradient(to right, #444 0%, #fff 50%, #444 100%);
-            background-size: 200% auto;
+            background: var(--chrome-text);
             -webkit-background-clip: text;
-            /* Анимация текста */
-            animation: shine 3s linear infinite, tracking 3s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-            opacity: 0; 
-            transform: scale(0.9);
+            margin-bottom: 30px;
+            animation: pulseText 2s infinite alternate;
         }
 
-        @keyframes shine {
-            to { background-position: 200% center; }
+        @keyframes pulseText {
+            from { opacity: 0.6; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        @keyframes tracking {
-            0% { letter-spacing: 10px; opacity: 0; transform: scale(0.9); }
-            30% { opacity: 1; }
-            100% { letter-spacing: 15px; opacity: 1; transform: scale(1); }
-        }
-
-        /* Тонкая линия загрузки */
         .loader-line-wrapper {
-            width: 300px;
-            height: 1px;
+            width: 200px;
+            height: 2px;
             background: rgba(255,255,255,0.1);
-            margin: 30px auto;
+            margin: 0 auto;
             position: relative;
             overflow: hidden;
+            border-radius: 2px;
         }
 
         .loader-line {
             position: absolute;
             top: 0; left: 0;
-            width: 0%;
             height: 100%;
+            width: 0%;
             background: #fff;
-            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
             transition: width 0.1s linear;
         }
 
-        /* Счетчик процентов и статус */
-        .loader-meta {
-            display: flex;
-            justify-content: space-between;
-            width: 300px;
-            margin: 0 auto;
+        .loader-percent {
+            margin-top: 10px;
             font-family: 'Manrope', sans-serif;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             color: #666;
-            text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .loader-counter {
-            color: #fff;
-            font-weight: bold;
+        /* Анимация появления контента сайта */
+        body.loading .gallery-track, 
+        body.loading .header, 
+        body.loading .progress-container {
+            opacity: 0;
+            transform: translateY(50px);
+            filter: blur(10px);
+        }
+
+        .gallery-track, .header, .progress-container {
+            transition: opacity 1.5s ease, transform 1.5s cubic-bezier(0.19, 1, 0.22, 1), filter 1.5s ease;
         }
 
         /* --- LIGHTBOX --- */
@@ -144,10 +142,14 @@
             transition: opacity 0.4s ease;
         }
 
-        .lightbox.active { opacity: 1; pointer-events: all; }
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: all;
+        }
 
         .lightbox img {
-            max-width: 90vw; max-height: 85vh;
+            max-width: 90vw;
+            max-height: 85vh;
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 0 80px rgba(255, 255, 255, 0.15);
             transform: scale(0.9);
@@ -155,71 +157,110 @@
             cursor: none;
         }
 
-        .lightbox.active img { transform: scale(1); }
+        .lightbox.active img {
+            transform: scale(1);
+        }
 
+        /* Кнопка закрытия */
         .close-btn {
-            position: absolute; top: 40px; right: 40px; width: 60px; height: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            cursor: none; z-index: 10001; transition: all 0.3s ease;
-            background: rgba(0,0,0,0.5); user-select: none;
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: none; 
+            z-index: 10001;
+            transition: all 0.3s ease;
+            background: rgba(0,0,0,0.5);
+            user-select: none;
         }
 
         .close-btn::before, .close-btn::after {
-            content: ''; position: absolute; width: 24px; height: 1px;
-            background-color: #fff; transition: transform 0.3s ease;
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 1px;
+            background-color: #fff;
+            transition: transform 0.3s ease;
         }
         .close-btn::before { transform: rotate(45deg); }
         .close-btn::after { transform: rotate(-45deg); }
 
         .close-btn:hover {
-            border-color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(90deg);
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
         }
 
         /* --- SILVER CURSOR --- */
         #cursor {
-            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
-            background: var(--silver-gradient); border-radius: 50%;
-            transform: translate(-50%, -50%); pointer-events: none; z-index: 11000;
+            position: fixed;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
+            background: var(--silver-gradient);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 11000;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-            mix-blend-mode: exclusion; transition: width 0.3s, height 0.3s;
+            mix-blend-mode: exclusion;
+            transition: width 0.3s, height 0.3s;
         }
         
         #cursor-follower {
-            position: fixed; top: 0; left: 0; width: 50px; height: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
-            transform: translate(-50%, -50%); pointer-events: none; z-index: 10999;
+            position: fixed;
+            top: 0; left: 0;
+            width: 50px; height: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10999;
             transition: all 0.1s ease-out;
         }
 
         /* --- HEADER --- */
         .header {
-            position: fixed; top: 0; left: 0; width: 100%; padding: 40px 60px;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 100; pointer-events: none;
-            opacity: 0; transition: opacity 1s ease 0.5s; /* Появится после загрузки */
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            pointer-events: none;
         }
-        body.loaded .header { opacity: 1; }
 
         .logo {
             font-family: 'Italiana', serif; font-size: 2rem;
             letter-spacing: 5px; text-transform: uppercase;
             background: var(--chrome-text);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            pointer-events: auto; display: flex; align-items: center;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            pointer-events: auto;
         }
-        .logo img { height: 50px; width: auto; display: block; }
-        .meta { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 2px; }
+
+        .logo img {
+            height: 50px; width: auto; display: block;
+        }
+
+        .meta {
+            font-size: 0.8rem; color: #666;
+            text-transform: uppercase; letter-spacing: 2px;
+        }
 
         /* --- GALLERY --- */
         .gallery-track {
             display: flex; align-items: center;
             padding-left: 20vw; padding-right: 20vw;
             gap: 15vw; will-change: transform;
-            opacity: 0; transform: scale(0.95);
-            transition: opacity 1s ease 0.5s, transform 1s ease 0.5s;
         }
-        body.loaded .gallery-track { opacity: 1; transform: scale(1); }
 
         .card {
             position: relative; width: 400px;
@@ -283,16 +324,15 @@
         .progress-container {
             position: fixed; bottom: 50px; left: 60px; right: 60px; height: 1px;
             background: rgba(255, 255, 255, 0.1); z-index: 100;
-            opacity: 0; transition: opacity 1s ease 1s;
         }
-        body.loaded .progress-container { opacity: 1; }
-
         .progress-bar { height: 100%; width: 0; background: #fff; box-shadow: 0 0 10px #fff; }
 
         /* --- MOBILE --- */
         @media (max-width: 768px) {
             #cursor, #cursor-follower { display: none; }
-            body { overflow-y: auto; display: block; height: auto; cursor: auto; }
+            body { 
+                overflow-y: auto; display: block; height: auto; cursor: auto;
+            }
             .header { position: relative; padding: 20px; }
             .gallery-track {
                 flex-direction: column; padding: 0 20px 100px 20px;
@@ -302,30 +342,24 @@
             .img-wrap { height: 450px; z-index: 2; position: relative; }
             .progress-container { display: none; }
             .card-num { top: -60px; left: 10px; font-size: 6rem; opacity: 0.5; z-index: 0; line-height: 1; }
+            
             .lightbox img { cursor: default; }
             .close-btn { cursor: pointer; }
             .click-layer { cursor: pointer; }
-            
-            /* Адаптация лоадера */
-            .loader-logo { font-size: 2.5rem; letter-spacing: 3px; }
-            .loader-line-wrapper { width: 200px; }
         }
 
     </style>
 </head>
-<body>
+<body class="loading">
 
-    <!-- CINEMATIC PRELOADER -->
+    <!-- PRELOADER -->
     <div class="preloader" id="preloader">
         <div class="loader-content">
             <div class="loader-logo">BESYACHKA</div>
             <div class="loader-line-wrapper">
                 <div class="loader-line" id="loader-line"></div>
             </div>
-            <div class="loader-meta">
-                <span id="loader-status">INITIALIZING</span>
-                <span class="loader-counter" id="loader-counter">0%</span>
-            </div>
+            <div class="loader-percent" id="loader-percent">0%</div>
         </div>
     </div>
 
@@ -349,7 +383,6 @@
     <!-- Галерея -->
     <div class="gallery-track" id="track">
         
-        <!-- 1 -->
         <div class="card">
             <div class="card-num">01</div>
             <div class="img-wrap">
@@ -362,7 +395,6 @@
             </div>
         </div>
 
-        <!-- 2 -->
         <div class="card">
             <div class="card-num">02</div>
             <div class="img-wrap">
@@ -375,7 +407,6 @@
             </div>
         </div>
 
-        <!-- 3 -->
         <div class="card">
             <div class="card-num">03</div>
             <div class="img-wrap">
@@ -388,7 +419,6 @@
             </div>
         </div>
 
-        <!-- 4 -->
         <div class="card">
             <div class="card-num">04</div>
             <div class="img-wrap">
@@ -401,7 +431,6 @@
             </div>
         </div>
 
-        <!-- 5 -->
         <div class="card">
             <div class="card-num">05</div>
             <div class="img-wrap">
@@ -424,34 +453,34 @@
         // --- PRELOADER LOGIC ---
         const preloader = document.getElementById('preloader');
         const loaderLine = document.getElementById('loader-line');
-        const loaderCounter = document.getElementById('loader-counter');
-        const loaderStatus = document.getElementById('loader-status');
+        const loaderPercent = document.getElementById('loader-percent');
         
         let progress = 0;
         const totalDuration = 2500; // 2.5 секунды
         const intervalTime = 30;
         const step = 100 / (totalDuration / intervalTime);
 
-        const statusMessages = ["INITIALIZING", "LOADING ASSETS", "RENDERING", "ACCESS GRANTED"];
-
+        // Запуск анимации загрузки
         const interval = setInterval(() => {
             progress += step;
             if (progress > 100) progress = 100;
             
             loaderLine.style.width = progress + '%';
-            loaderCounter.textContent = Math.round(progress) + '%';
-            
-            // Меняем статус
-            if (progress > 30 && progress < 60) loaderStatus.textContent = statusMessages[1];
-            else if (progress > 60 && progress < 90) loaderStatus.textContent = statusMessages[2];
-            else if (progress >= 100) loaderStatus.textContent = statusMessages[3];
+            loaderPercent.innerText = Math.round(progress) + '%';
 
             if (progress >= 100) {
                 clearInterval(interval);
                 setTimeout(() => {
+                    // Убираем прелоадер
                     preloader.classList.add('hidden');
-                    document.body.classList.add('loaded');
-                }, 500); // Пауза перед исчезновением
+                    // Показываем контент
+                    document.body.classList.remove('loading');
+                    
+                    // Удаляем прелоадер из DOM через секунду, чтобы не мешал
+                    setTimeout(() => {
+                        preloader.style.display = 'none';
+                    }, 1000);
+                }, 500);
             }
         }, intervalTime);
 
@@ -514,22 +543,31 @@
         let targetScroll = 0;
         const maxScroll = () => track.scrollWidth - window.innerWidth;
 
+        // ВАЖНО: { passive: false } позволяет делать preventDefault()
         window.addEventListener('wheel', (e) => {
             if (window.innerWidth > 768) {
+                // Блокируем стандартный вертикальный скролл
+                e.preventDefault();
+                
+                // Добавляем к цели скролла (e.deltaY - это вертикальная прокрутка колеса)
                 targetScroll += e.deltaY;
+                
+                // Ограничиваем, чтобы не улететь в бесконечность
                 targetScroll = Math.max(0, Math.min(targetScroll, maxScroll() + 200));
             }
-        });
+        }, { passive: false });
 
         function animateScroll() {
             if (window.innerWidth > 768) {
+                // Лерпинг: плавное движение к цели
                 scrollAmount += (targetScroll - scrollAmount) * 0.08;
+                
                 track.style.transform = `translateX(-${scrollAmount}px)`;
                 
-                let progressVal = (scrollAmount / maxScroll()) * 100;
-                progressBar.style.width = `${Math.min(progressVal, 100)}%`;
+                let progress = (scrollAmount / maxScroll()) * 100;
+                progressBar.style.width = `${Math.min(progress, 100)}%`;
                 
-                // Skew Effect
+                // Эффект наклона (Skew) при движении
                 const speed = targetScroll - scrollAmount;
                 const skew = speed * 0.05;
                 const images = document.querySelectorAll('.img-wrap img');
