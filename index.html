@@ -2,12 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Besyachka</title>
-    
-    <!-- 1. ИКОНКА ВО ВКЛАДКЕ (Favicon) -->
-    <link rel="icon" type="image/png" href="logo.png">
-
     <style>
         /* --- FONTS --- */
         @import url('https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@300;500&display=swap');
@@ -29,7 +25,6 @@
             outline: none;
         }
 
-        /* Страховка для кликабельных элементов */
         div, img, span, button {
             -webkit-tap-highlight-color: rgba(0,0,0,0);
             -webkit-tap-highlight-color: transparent;
@@ -47,136 +42,65 @@
 
         /* --- LIGHTBOX --- */
         .lightbox {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(10px);
-            z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(10px);
+            z-index: 10000; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
         }
-
-        .lightbox.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
+        .lightbox.active { opacity: 1; pointer-events: all; }
         .lightbox img {
-            max-width: 90vw;
-            max-height: 85vh;
+            max-width: 90vw; max-height: 85vh;
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 0 80px rgba(255, 255, 255, 0.15);
-            transform: scale(0.9);
-            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transform: scale(0.9); transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             cursor: none;
         }
+        .lightbox.active img { transform: scale(1); }
 
-        .lightbox.active img {
-            transform: scale(1);
-        }
-
-        /* Кнопка закрытия */
         .close-btn {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            width: 60px;
-            height: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: none; 
-            z-index: 10001;
-            transition: all 0.3s ease;
-            background: rgba(0,0,0,0.5);
-            user-select: none;
+            position: absolute; top: 40px; right: 40px; width: 60px; height: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: none; z-index: 10001; transition: all 0.3s ease;
+            background: rgba(0,0,0,0.5); user-select: none;
         }
-
         .close-btn::before, .close-btn::after {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 1px;
-            background-color: #fff;
-            transition: transform 0.3s ease;
+            content: ''; position: absolute; width: 24px; height: 1px;
+            background-color: #fff; transition: transform 0.3s ease;
         }
         .close-btn::before { transform: rotate(45deg); }
         .close-btn::after { transform: rotate(-45deg); }
-
-        .close-btn:hover {
-            border-color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-            transform: rotate(90deg);
-        }
+        .close-btn:hover { border-color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(90deg); }
 
         /* --- SILVER CURSOR --- */
         #cursor {
-            position: fixed;
-            top: 0; left: 0;
-            width: 20px; height: 20px;
-            background: var(--silver-gradient);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 11000;
+            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+            background: var(--silver-gradient); border-radius: 50%;
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 11000;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-            mix-blend-mode: exclusion;
-            transition: width 0.3s, height 0.3s;
+            mix-blend-mode: exclusion; transition: width 0.3s, height 0.3s;
         }
-        
         #cursor-follower {
-            position: fixed;
-            top: 0; left: 0;
-            width: 50px; height: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 10999;
+            position: fixed; top: 0; left: 0; width: 50px; height: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 10999;
             transition: all 0.1s ease-out;
         }
 
         /* --- HEADER --- */
         .header {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            padding: 40px 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; padding: 40px 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; pointer-events: none;
         }
-
         .logo {
-            pointer-events: auto;
-            display: flex;
-            align-items: center;
+            font-family: 'Italiana', serif; font-size: 2rem; letter-spacing: 5px;
+            text-transform: uppercase; background: var(--chrome-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            pointer-events: auto; display: flex; align-items: center;
         }
-
-        /* 2. СТИЛИ ДЛЯ ЛОГОТИПА-КАРТИНКИ */
-        .logo img {
-            height: 50px; /* Оптимальная высота для шапки */
-            width: auto;  /* Ширина подстроится автоматически */
-            display: block;
-            /* Если логотип черный, можно инвертировать его в белый фильтром:
-               filter: invert(1); 
-               Если логотип уже подходит под темный фон, эту строку не добавляй.
-            */
-        }
-
-        .meta {
-            font-size: 0.8rem; color: #666;
-            text-transform: uppercase; letter-spacing: 2px;
-        }
+        .logo img { height: 50px; width: auto; display: block; }
+        .meta { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 2px; }
 
         /* --- GALLERY --- */
         .gallery-track {
@@ -250,21 +174,43 @@
         }
         .progress-bar { height: 100%; width: 0; background: #fff; box-shadow: 0 0 10px #fff; }
 
-        /* --- MOBILE --- */
+        /* --- MOBILE ADAPTATION (FIXED) --- */
         @media (max-width: 768px) {
             #cursor, #cursor-follower { display: none; }
             body { 
                 overflow-y: auto; display: block; height: auto; cursor: auto;
             }
             .header { position: relative; padding: 20px; }
+            
             .gallery-track {
-                flex-direction: column; padding: 0 20px 100px 20px;
-                gap: 100px; transform: none !important;
+                flex-direction: column; 
+                padding: 20px 20px 100px 20px;
+                gap: 120px; /* Увеличили отступ между карточками */
+                transform: none !important;
             }
-            .card { width: 100%; }
-            .img-wrap { height: 400px; }
+
+            .card { 
+                width: 100%; 
+                padding-top: 20px; /* Место для цифры сверху */
+            }
+
+            .img-wrap { 
+                height: 450px; 
+                z-index: 2; /* Картинка выше цифры */
+                position: relative;
+            }
+
             .progress-container { display: none; }
-            .card-num { top: -40px; left: 0; font-size: 4rem; }
+
+            /* --- ИСПРАВЛЕНИЕ ЦИФР --- */
+            .card-num {
+                top: -60px; /* Поднимаем выше */
+                left: 10px; /* Не прижимаем к краю */
+                font-size: 6rem; /* Крупная цифра */
+                opacity: 0.5; /* Прозрачность */
+                z-index: 0; /* Под картинкой */
+                line-height: 1;
+            }
             
             .lightbox img { cursor: default; }
             .close-btn { cursor: pointer; }
@@ -436,6 +382,7 @@
                 let progress = (scrollAmount / maxScroll()) * 100;
                 progressBar.style.width = `${Math.min(progress, 100)}%`;
                 
+                // Skew Effect
                 const speed = targetScroll - scrollAmount;
                 const skew = speed * 0.05;
                 const images = document.querySelectorAll('.img-wrap img');
