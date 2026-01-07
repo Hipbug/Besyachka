@@ -278,9 +278,10 @@
 
         .card-num {
             font-family: 'Italiana', serif; font-size: 5rem;
-            background: linear-gradient(to right, #333, #000);
+            /* Яркий серебряный градиент для цифр */
+            background: linear-gradient(to bottom, #ffffff 0%, #999999 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            -webkit-text-stroke: 1px rgba(255,255,255,0.5);
             position: absolute; top: -60px; left: -40px; z-index: 0;
         }
 
@@ -343,14 +344,26 @@
                 overflow-y: auto; display: block; height: auto; cursor: auto;
             }
             .header { position: relative; padding: 20px; }
+            
             .gallery-track {
-                flex-direction: column; padding: 0 20px 100px 20px;
+                flex-direction: column; 
+                /* ИЗМЕНЕНИЕ: Увеличил верхний padding до 120px, чтобы сдвинуть карточки вниз */
+                padding: 120px 20px 100px 20px; 
                 gap: 120px; transform: none !important;
             }
+            
             .card { width: 100%; padding-top: 20px; }
             .img-wrap { height: 450px; z-index: 2; position: relative; }
             .progress-container { display: none; }
-            .card-num { top: -60px; left: 10px; font-size: 6rem; opacity: 0.5; z-index: 0; line-height: 1; }
+            
+            .card-num { 
+                top: -90px; 
+                left: 10px; 
+                font-size: 6rem; 
+                opacity: 0.8; 
+                z-index: 0; 
+                line-height: 1; 
+            }
             
             .lightbox img { cursor: default; }
             .close-btn { cursor: pointer; }
